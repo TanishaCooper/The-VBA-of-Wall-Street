@@ -1,0 +1,140 @@
+Sub StockMarketDataAnalysis()
+
+    'Loop Through Each Worksheets
+    For Each ws In Worksheets
+
+        'Column Headers (Missing in Data)
+        ws.Range("I1").Value = "Ticker Symbol"
+        'Calculation note Difference from opening to ending price
+        ws.Range("J1").Value = "Yearly Change"
+        'Calculation note percentage or difference in percentage from opening to ending price (B1/A1)*100%
+        ws.Range("K1").Value = "Percent Change"
+        'Sum of all Stock Volume
+        ws.Range("L1").Value = "Total Stock Volume"
+        
+        'Bonus Column Headers
+        ws.Range("O2").Value = "Greatest % Increase"
+        ws.Range("O3").Value = "Greatest % Decrease"
+        ws.Range("O4").Value = "Greatest Total Volume"
+        ws.Range("P1").Value = "Ticker Symbol"
+        ws.Range("Q1").Value = "Stock Results"
+        
+    
+    
+        'Set Variables to display results last row
+        Dim LRow As Long
+        Dim LRowVal As Long
+    
+        'Insert values into Stock Summary table
+        Dim TickerSymb As String
+        Dim TotalStockVol As Double
+        TotalStockVol = 0
+        
+        'Close Price - Open Price
+        Dim YearlyOpenPrice As Double
+        Dim YearlyClosePrice As Double
+        Dim PreviousPrice As Long
+        PreviousPrice = 2
+        Dim YearlyChange As Double
+        Dim PercentChange As Double
+    
+        'Setup integers for loop overall table summary view
+        Dim StockSummaryTable As Long
+        StockSummaryTable = 2
+        
+        'Bonus  variables to display Stock Results
+        Dim GreatestInc As Double
+        GreatestInc = 0
+        Dim GreatestDec As Double
+        GreatestDec = 0
+        Dim GreatestTotVol As Double
+        GreatestTotVol = 0
+        
+    
+        'Set the Last Row (Similar to Ctrl + Alt + Down Arrow)
+        LRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+        For i = 2 To LRow
+    
+            'Sum Total Stock Volume as long as the ticker symbol (name) is the same
+            TotalStockVol = TotalStockVol + ws.Cells(i, 7).Value
+    
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+        
+                'Setup StockSummary Table values
+        
+                TickerSymb = ws.Cells(i, 1).Value
+                ws.Range("I" & StockSummaryTable).Value = TickerSymb
+                ws.Range("L" & StockSummaryTable).Value = TotalStockVol
+                TotalStockVol = 0
+            
+                YearlyOpenPrice = ws.Range("C" & PreviousPrice)
+                YearlyClosePrice = ws.Range("F" & i)
+                YearlyChange = YearlyClosePrice - YearlyOpenPrice
+                ws.Range("J" & StockSummaryTable).Value = YearlyChange
+            
+                'Calculate Percent Change - ensure to highlight that you can't divide by Zero
+                If YearlyOpenPrice = 0 Then
+                    PercentChange = 0
+                
+                Else
+                    YearlyOpenPrice = ws.Range("C" & PreviousPrice)
+                    PercentChange = YearlyChange / YearlyOpenPrice
+                
+                End If
+                
+                'Format Stock Summary Table values to have percent sign, decimal, and separator
+                ws.Range("K" & StockSummaryTable).NumberFormat = "0.00%"
+                ws.Range("K" & StockSummaryTable).Value = PercentChange
+                ws.Range("L" & StockSummaryTable).NumberFormat = "000,000"
+                
+                
+                'Conditional Formatting Color Green is Positive and Red is Negative
+                If ws.Range("J" & StockSummaryTable).Value >= 0 Then
+                    ws.Range("J" & StockSummaryTable).Interior.ColorIndex = 4
+                
+                Else
+                    ws.Range("J" & StockSummaryTable).Interior.ColorIndex = 3
+                
+                End If
+            
+                StockSummaryTable = StockSummaryTable + 1
+                PreviousAmount = i + 1
+            
+                End If
+            
+            Next i
+            
+            ' Bonus Summary of Greatest % Increase, Greatest % Decrease, and Greatest Total Volume
+            LRow = ws.Cells(Rows.Count, 11).End(xlUp).Row
+        
+            ' Start Loop For Conditions to pull in the value for each bonus category.
+            For i = 2 To LRow
+                If ws.Range("K" & i).Value > ws.Range("Q2").Value Then
+                    ws.Range("Q2").Value = ws.Range("K" & i).Value
+                    ws.Range("P2").Value = ws.Range("I" & i).Value
+                End If
+
+                If ws.Range("K" & i).Value < ws.Range("Q3").Value Then
+                    ws.Range("Q3").Value = ws.Range("K" & i).Value
+                    ws.Range("P3").Value = ws.Range("I" & i).Value
+                End If
+
+                If ws.Range("L" & i).Value > ws.Range("Q4").Value Then
+                    ws.Range("Q4").Value = ws.Range("L" & i).Value
+                    ws.Range("P4").Value = ws.Range("I" & i).Value
+                End If
+
+            Next i
+        
+        ' Format Bonus Table To Include Percent Sign And Two Decimal Places
+            ws.Range("Q2").NumberFormat = "0.00%"
+            ws.Range("Q3").NumberFormat = "0.00%"
+            
+        ' Format Bonus Table Columns To Auto Fit and Number Format to show separator
+        ws.Columns("I:Q").AutoFit
+        ws.Range("Q4").NumberFormat = "000,000"
+
+    Next ws
+
+End Sub
