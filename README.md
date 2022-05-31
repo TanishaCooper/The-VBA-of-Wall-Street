@@ -11,10 +11,10 @@
 
 #### First VBA Challenge
 -	Create an excel VBA script that loops through all the stocks year over year with output of the following:
-o	Ticker Symbol (AAB, AAF, etc.…)
-o	Yearly Change (Yearly Closing Price – Yearly Opening Price)
-o	Percent Change (Yearly Change/Yearly Open Price)
-o	Total Stock Volume (Sum “Volume” if ticker symbols are the same)
+*	Ticker Symbol (AAB, AAF, etc.…)
+*	Yearly Change (Yearly Closing Price – Yearly Opening Price)
+*	Percent Change (Yearly Change/Yearly Open Price)
+*	Total Stock Volume (Sum “Volume” if ticker symbols are the same)
 -	Display conditional formatting for “Yearly Change” column to reflect positive change (green) and negative change (red)
 
 Second (Bonus) VBA Challenge
